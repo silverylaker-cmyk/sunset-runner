@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0620">
+<title>SUNSET RUNNER</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="game" width="640" height="360"></canvas>
+
+<div id="hud" hidden>
+  <div id="stage">STAGE 1</div>
+  <div id="time">60</div>
+  <div id="speed">0 <small>km/h</small></div>
+  <div id="msg"></div>
+  <div id="hudbtns">
+    <button id="calib" type="button">재보정</button>
+    <button id="invert" type="button">좌우반전</button>
+    <button id="mute" type="button">🔊</button>
+    <button id="dbg" type="button">dbg</button>
+  </div>
+  <pre id="debug" hidden></pre>
+</div>
+
+<div id="brake" class="pedal"><span>BRAKE</span></div>
+<div id="accel" class="pedal"><span>ACCEL</span></div>
+
+<div id="title" class="overlay">
+  <h1>SUNSET<br>RUNNER</h1>
+  <p class="sub">CHECKPOINT TIME ATTACK</p>
+  <p class="best" id="best"></p>
+  <p class="tap">화면을 탭해서 시작</p>
+  <p class="hint">폰을 핸들처럼 세워 잡고 좌우로 돌려 조향<br>왼쪽 끝 브레이크 · 오른쪽 끝 액셀</p>
+</div>
+
+<div id="gameover" class="overlay" hidden>
+  <h1 id="go-title">TIME UP</h1>
+  <p id="go-stats"></p>
+  <p class="tap">탭해서 다시 시작</p>
+</div>
+
+<div id="rotate" class="overlay">
+  <div class="phone">📱</div>
+  <p>폰을 가로로 돌려주세요</p>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

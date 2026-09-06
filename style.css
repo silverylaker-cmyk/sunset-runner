@@ -1,0 +1,77 @@
+:root{
+  --pedal-w: 22vw;
+  --font: "Press Start 2P", "Courier New", ui-monospace, monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{
+  margin:0;padding:0;width:100%;height:100%;
+  background:#0b0620;color:#fff;overflow:hidden;
+  touch-action:none;user-select:none;-webkit-user-select:none;
+  overscroll-behavior:none;position:fixed;
+  font-family:var(--font);
+}
+#game{
+  position:fixed;inset:0;width:100vw;height:100dvh;display:block;
+  image-rendering:pixelated;image-rendering:crisp-edges;
+  background:#000;
+}
+/* HUD */
+#hud{position:fixed;inset:0;pointer-events:none;
+  padding-top:max(8px,env(safe-area-inset-top));
+  text-shadow:2px 2px 0 #000, -1px -1px 0 #000;}
+#stage{position:absolute;top:calc(max(8px,env(safe-area-inset-top)) + 6px);left:calc(var(--pedal-w) + 8px);max-width:26vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:clamp(12px,2.6vh,20px);color:#ffe066;letter-spacing:1px}
+#time{position:absolute;top:calc(max(8px,env(safe-area-inset-top)) + 2px);left:50%;transform:translateX(-50%);
+  font-size:clamp(22px,6vh,44px);font-weight:bold;color:#fff}
+#time.low{color:#ff4d4d;animation:blink .5s steps(2) infinite}
+#speed{position:absolute;top:calc(max(8px,env(safe-area-inset-top)) + 6px);right:calc(var(--pedal-w) + 8px);
+  font-size:clamp(14px,3vh,24px);color:#7df9ff}
+#speed small{font-size:.5em;color:#fff}
+#msg{position:absolute;top:32%;left:50%;transform:translate(-50%,-50%);
+  font-size:clamp(18px,6vh,48px);color:#ffe066;text-align:center;white-space:nowrap;
+  opacity:0;transition:opacity .15s}
+#msg.show{opacity:1}
+#hudbtns{position:absolute;bottom:max(8px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+  display:flex;gap:8px;pointer-events:auto}
+#hudbtns button.on{background:#ffe066cc;color:#000}
+#hudbtns button{font-family:var(--font);font-size:11px;padding:6px 10px;border:1px solid #fff8;
+  background:#0008;color:#fff;border-radius:6px}
+#debug{position:absolute;left:calc(var(--pedal-w) + 8px);bottom:max(8px,env(safe-area-inset-bottom));
+  margin:0;font-size:10px;color:#0f0;background:#0008;padding:4px;text-shadow:none;font-family:monospace}
+@keyframes blink{50%{opacity:.3}}
+/* Pedals */
+.pedal{
+  position:fixed;top:0;bottom:0;width:var(--pedal-w);
+  display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:calc(14vh + env(safe-area-inset-bottom));
+  font-size:clamp(10px,2.2vh,16px);letter-spacing:1px;
+  color:#fff9;touch-action:none;z-index:5;
+}
+.pedal span{padding:14px 10px;border:2px solid #fff6;border-radius:12px;background:#0006;
+  writing-mode:vertical-rl;text-orientation:upright}
+#brake{left:0;background:linear-gradient(90deg,#ff2d5540,transparent)}
+#accel{right:0;background:linear-gradient(270deg,#2dff7a40,transparent)}
+.pedal.on{color:#fff}
+#brake.on{background:linear-gradient(90deg,#ff2d5590,transparent)}
+#accel.on{background:linear-gradient(270deg,#2dff7a90,transparent)}
+.pedal.on span{background:#fff3;border-color:#fff}
+body.title .pedal,body.gameover .pedal{display:none}
+/* Overlays */
+.overlay{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  background:linear-gradient(180deg,#0b0620d0,#2a0a4ad0);padding:20px;
+  text-shadow:3px 3px 0 #000}
+.overlay h1{font-size:clamp(28px,10vh,72px);margin:0 0 8px;line-height:1.05;
+  color:#ffe066;text-shadow:4px 4px 0 #d6336c,8px 8px 0 #0008;letter-spacing:2px}
+.overlay .sub{color:#7df9ff;font-size:clamp(10px,2.4vh,16px);margin:4px 0}
+.overlay .best{color:#fff;font-size:clamp(10px,2.4vh,16px);margin:4px 0;min-height:1em}
+.overlay .tap{font-size:clamp(12px,3vh,22px);margin:18px 0 10px;animation:blink 1s steps(2) infinite}
+.overlay .hint{font-size:clamp(9px,2vh,14px);color:#fffb;line-height:1.6;margin:0}
+#gameover h1{color:#ff4d4d}
+#gameover h1.goal{color:#7dff7d}
+#go-stats{font-size:clamp(11px,2.6vh,18px);line-height:1.8;white-space:pre-line}
+#rotate{display:none;z-index:20;background:#0b0620;font-size:clamp(14px,4vw,24px)}
+#rotate .phone{font-size:64px;animation:rot 1.5s ease-in-out infinite}
+@keyframes rot{0%,20%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
+@media (orientation:portrait){ #rotate{display:flex} }

@@ -112,16 +112,18 @@ export class Input {
   }
 
   _bindPointers() {
-    const zoneOf = (x) => {
-      const w = window.innerWidth;
-      if (x < w * 0.22) return 'brake';
-      if (x > w * 0.78) return 'accel';
+    // pedal squares glued to the top corners, side = 40% of the viewport height (matches --pedal in CSS)
+    const zoneOf = (x, y) => {
+      const side = window.innerHeight * 0.4;
+      if (y > side) return 'mid';
+      if (x < side) return 'brake';
+      if (x > window.innerWidth - side) return 'accel';
       return 'mid';
     };
     const down = (e) => {
       if (e.target.closest && e.target.closest('button, .overlay')) return;
       e.preventDefault();
-      const zone = zoneOf(e.clientX);
+      const zone = zoneOf(e.clientX, e.clientY);
       this.pointers.set(e.pointerId, zone);
       if (zone === 'mid' && !this.hasSensor) this.dragSteer = { id: e.pointerId, x: e.clientX };
     };

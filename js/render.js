@@ -155,11 +155,11 @@ export class Renderer {
       sign(c, w, h, s) {
         const v = (s && s.variant) || 0;
         c.fillStyle = '#6b4c2a'; c.fillRect(-w * 0.06, -h * 0.55, w * 0.12, h * 0.55);
-        const cols = [['#ffd23f', '#d6336c'], ['#3b7dff', '#fff'], ['#ff7f3f', '#222'], ['#2fbf71', '#fff']];
+        const cols = [['#ffd23f', '#d6336c'], ['#3b7dff', '#fff'], ['#ff7f3f', '#222'], ['#2fbf71', '#fff'], ['#e03131', '#fff']];
         c.fillStyle = cols[v][0]; c.fillRect(-w * 0.5, -h, w, h * 0.48);
         c.fillStyle = cols[v][1];
         c.font = `bold ${Math.max(4, h * 0.2)}px monospace`; c.textAlign = 'center'; c.textBaseline = 'middle';
-        c.fillText(['SUNSET', 'RUNNER', 'TURBO', 'COAST'][v], 0, -h * 0.76);
+        c.fillText(['SUNSET', 'RUNNER', 'TURBO', 'COAST', 'SLOW!'][v], 0, -h * 0.76);
       },
       building(c, w, h, s, idx) {
         const k = hash(idx * 11 + 5);

@@ -29,7 +29,7 @@ const ui = {
     const m = Math.floor(r.elapsed / 60), s = (r.elapsed % 60).toFixed(2).padStart(5, '0');
     $('go-stats').textContent =
       `SCORE ${r.score.toLocaleString()}${r.newBest ? '  ★ NEW BEST' : ''}\n` +
-      `${r.distanceKm.toFixed(2)} km  ·  ${r.goal ? 'ALL 5 STAGES' : 'STAGE ' + r.stage}\n` +
+      `${r.distanceKm.toFixed(2)} km  ·  ${r.goal ? `ALL ${STAGES.length} STAGES` : 'STAGE ' + r.stage}\n` +
       `TIME ${m}:${s}` + (r.goal ? `  ·  BONUS +${Math.floor(r.timeLeft)}s` : '');
     $('gameover').hidden = false;
   },

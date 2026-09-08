@@ -27,23 +27,33 @@ export const STAGES = [
   { name: 'COCONUT BEACH', segs: 1500, bonus: 50,
     sky: ['#1a4fd6', '#7ec8ff', '#ffe9a8'], sun: '#fff5c0', hills: ['#4a7fc0', '#2f5fa0'],
     grass: ['#3fbf4f', '#33a843'], road: ['#6b6b6b', '#646464'], rumble: ['#ffffff', '#e03030'],
-    lane: '#ffffff', fog: '#7ec8ff', sprites: ['palm', 'palm', 'bush'], signEvery: 60, traffic: 40 },
+    lane: '#ffffff', fog: '#7ec8ff', sprites: ['palm', 'palm', 'bush'], signEvery: 60, traffic: 40,
+    curveMax: 4, hillMax: 20 },
+  { name: 'MOUNTAIN PASS', segs: 1900, bonus: 60,
+    sky: ['#3f628f', '#9fb8d0', '#e6eef5'], sun: '#ffffff', hills: ['#4a6b52', '#2c4438'],
+    grass: ['#4d7a3a', '#437034'], road: ['#5a5a5a', '#535353'], rumble: ['#ffffff', '#c0392b'],
+    lane: '#ffffff', fog: '#9fb8d0', sprites: ['pine', 'rock', 'pine', 'bush', 'rock'], signEvery: 90, traffic: 30,
+    curveMax: 6, hillMax: 60, hairpins: 5 },
   { name: 'DESERT CANYON', segs: 1600, bonus: 50,
     sky: ['#ff7a3d', '#ffb15c', '#fff0b0'], sun: '#fff', hills: ['#c05a30', '#8f3a20'],
     grass: ['#dcb46a', '#d0a85e'], road: ['#707070', '#686868'], rumble: ['#ffffff', '#c0392b'],
-    lane: '#ffffff', fog: '#ffb15c', sprites: ['cactus', 'rock', 'rock', 'bush'], signEvery: 70, traffic: 45 },
+    lane: '#ffffff', fog: '#ffb15c', sprites: ['cactus', 'rock', 'rock', 'bush'], signEvery: 70, traffic: 45,
+    curveMax: 4, hillMax: 40 },
   { name: 'ALPINE PASS', segs: 1700, bonus: 50,
     sky: ['#2b6fb8', '#9fd3ff', '#ffffff'], sun: '#ffffff', hills: ['#cfe8ff', '#5f8fb0'],
     grass: ['#2f8f4f', '#287f45'], road: ['#5c5c5c', '#565656'], rumble: ['#ffffff', '#3060c0'],
-    lane: '#ffffff', fog: '#cfe8ff', sprites: ['pine', 'pine', 'pine', 'rock'], signEvery: 80, traffic: 50 },
+    lane: '#ffffff', fog: '#cfe8ff', sprites: ['pine', 'pine', 'pine', 'rock'], signEvery: 80, traffic: 50,
+    curveMax: 6, hillMax: 60 },
   { name: 'NEON CITY', segs: 1800, bonus: 50,
     sky: ['#2a0a4a', '#8a2f8f', '#ff6f91'], sun: '#ffb3c6', hills: ['#3a1560', '#24093f'],
     grass: ['#3b3b4f', '#343446'], road: ['#4a4a5a', '#444454'], rumble: ['#ffffff', '#ff2d95'],
-    lane: '#ffe066', fog: '#8a2f8f', sprites: ['building', 'lamp', 'building', 'sign'], signEvery: 50, traffic: 60 },
+    lane: '#ffe066', fog: '#8a2f8f', sprites: ['building', 'lamp', 'building', 'sign'], signEvery: 50, traffic: 60,
+    curveMax: 6, hillMax: 40 },
   { name: 'MIDNIGHT COAST', segs: 1900, bonus: 50,
     sky: ['#03031a', '#0d1b4a', '#243c7a'], sun: '#dfe8ff', hills: ['#101a3a', '#0a1028'], stars: true,
     grass: ['#1d4d2a', '#194424'], road: ['#3a3a44', '#34343e'], rumble: ['#dddddd', '#8a2020'],
-    lane: '#dddddd', fog: '#0d1b4a', sprites: ['palm', 'lamp', 'palm', 'bush'], signEvery: 60, traffic: 65 },
+    lane: '#dddddd', fog: '#0d1b4a', sprites: ['palm', 'lamp', 'palm', 'bush'], signEvery: 60, traffic: 65,
+    curveMax: 6, hillMax: 60 },
 ];
 
 export const START_TIME = 75;
@@ -78,16 +88,34 @@ export function buildTrack(seed = 1986) {
   }
 
   const L = { short: 25, med: 50, long: 100 };
-  const C = { none: 0, easy: 2, med: 4, hard: 6 };
+  const C = { none: 0, easy: 2, med: 4, hard: 6, hairpin: 12 };
   const H = { none: 0, low: 20, med: 40, high: 60 };
+
+  const warnSigns = [];   // segment indices that get a SLOW! sign
+
+  // a hairpin: long, hard bend (about 150 degrees of heading change) that climbs or drops
+  function addHairpin(s, dir, height) {
+    warnSigns.push({ index: segments.length + 5, side: -dir });
+    addRoad(L.short, L.short, L.short, 0, 0, s);                    // lead-in straight
+    addRoad(30, 95, 30, C.hairpin * dir, height, s);
+    addRoad(L.short, L.short, L.short, 0, 0, s);
+  }
 
   function pieces(stageIdx, target) {
     const s = stageIdx;
+    const st = STAGES[s];
     const start = segments.length;
-    // difficulty ramps with stage
-    const curveMax = [C.med, C.med, C.hard, C.hard, C.hard][s];
-    const hillMax = [H.low, H.med, H.high, H.med, H.high][s];
+    const curveMax = st.curveMax ?? C.med;
+    const hillMax = st.hillMax ?? H.med;
+    let hairpinsDone = 0;
     while (segments.length - start < target) {
+      if (st.hairpins && hairpinsDone < st.hairpins &&
+          segments.length - start >= hairpinsDone * target / st.hairpins) {
+        const dir = hairpinsDone % 2 === 0 ? 1 : -1;
+        addHairpin(s, dir, rng.range(4, 12) * (hairpinsDone < st.hairpins / 2 ? 1 : -1));
+        hairpinsDone++;
+        continue;
+      }
       const kind = rng.pick(['straight', 'curve', 'curve', 'hill', 'scurve', 'curvehill', 'rolling']);
       const len = rng.pick([L.short, L.med, L.med, L.long]);
       const dir = rng.chance(0.5) ? 1 : -1;
@@ -143,6 +171,11 @@ export function buildTrack(seed = 1986) {
     }
     if (i > 0) segments[stageStarts[i]].sprites.push({ type: 'gate', offset: 0 });
   });
+  for (const w of warnSigns) {
+    const seg = segments[w.index];
+    seg.sprites = seg.sprites.filter((sp) => sp.type !== 'sign');
+    seg.sprites.push({ type: 'sign', offset: w.side * 1.35, variant: 4 });
+  }
   segments[goalSeg].sprites.push({ type: 'goal', offset: 0 });
   // lamp posts lining the run-off
   for (let n = goalSeg + 10; n < segments.length; n += 12) {
